@@ -1,9 +1,17 @@
-
 """Environment-driven configuration."""
 
 import json
 import logging
 import os
+
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    load_dotenv = None
+
+if load_dotenv:
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+    load_dotenv(os.path.join(project_root, ".env"))
 
 log = logging.getLogger("config")
 

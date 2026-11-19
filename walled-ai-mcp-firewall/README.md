@@ -85,6 +85,17 @@ python -m pip install -e ".[dev]" pytest-asyncio
 
 ## 2. Configure credentials
 
+Copy `.env.example` to `.env` and replace all placeholders:
+
+```bash
+cp .env.example .env
+chmod 600 .env
+```
+
+The local `.env` is loaded automatically and is ignored by Git. Never commit real credentials.
+
+Alternatively, create an external secrets file:
+
 Create a secrets file at `~/.config/walled-ai-mcp-firewall/secrets.env`:
 
 ```bash
