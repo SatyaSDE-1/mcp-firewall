@@ -1,0 +1,19 @@
+{
+  "name": "walled-ai-mcp-popup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "socket.io-client": "^4.8.4"
+  },
+  "devDependencies": {
+    "electron": "^45.3.4"
+  }
+}
