@@ -33,22 +33,44 @@ def create_firewall_app(interceptor: Interceptor) -> FastAPI:
     app = FastAPI(title="MCP Firewall")
 
     @app.post("/mcp/intercept")
-    async def intercept(body: InterceptBody, x_firewall_token: Optional[str] = Header(None)):
-        if config.TOKEN and not (
-            x_firewall_token and hmac.compare_digest(x_firewall_token.encode(), config.TOKEN.encode())
+    async def intercept(
+        body: InterceptBody,
+        x_firewall_token: Optional[str] = Header(None),
+    ):
+        if not x_firewall_token or not hmac.compare_digest(
+            x_firewall_token.encode(),
+            config.MCP_REQUEST_TOKEN.encode(),
         ):
-            raise HTTPException(403, "Bad token")
-        r = await interceptor.intercept(body.message, body.source, body.server_name)
+            log.warning(
+                "MCP intercept authentication failed: source=%s server=%s",
+                body.source,
+                body.server_name,
+            )
+            raise HTTPException(
+                status_code=403,
+                detail="Invalid or missing MCP request token",
+            )
+
+        r = await interceptor.intercept(
+            body.message,
+            body.source,
+            body.server_name,
+        )
+
         if r.action == "forward":
             return {"action": "forward"}
-        return {"action": "deny", "response": r.response, "status": r.status.value}
+
+        return {
+            "action": "deny",
+            "response": r.response,
+            "status": r.status.value,
+        }
 
     @app.get("/health")
     async def health():
         return {"ok": True}
 
     return app
-
 
 def _rpc_error(code: int, message: str) -> JSONResponse:
     return JSONResponse({"jsonrpc": "2.0", "id": None, "error": {"code": code, "message": message}})

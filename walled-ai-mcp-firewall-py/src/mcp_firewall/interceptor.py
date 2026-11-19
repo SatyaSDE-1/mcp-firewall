@@ -1,4 +1,3 @@
-
 """Decides whether to forward or deny a JSON-RPC message."""
 
 import json
@@ -109,6 +108,13 @@ class Interceptor:
             )
 
         method = message["method"]
+        log.info(
+            "Interceptor received: source=%s server=%s method=%s rpcId=%s",
+            source,
+            server_name,
+            method,
+            message.get("id", "notification"),
+        )
 
         # Notifications have no request ID and cannot receive a response.
         # Non-protected methods also pass through without approval.
