@@ -7,7 +7,7 @@ from mcp_firewall import config
 from mcp_firewall.approval import ApprovalService
 from mcp_firewall.interceptor import Interceptor
 from mcp_firewall.models import RequestContext, Status
-from mcp_firewall.server import create_firewall_app
+from mcp_firewall.server import create_firewall_app, create_remote_app
 
 
 def ctx(i="r1"):
@@ -157,3 +157,39 @@ async def test_gated_allow_and_block_responses(monkeypatch):
     assert blocked.status_code == 200
     assert blocked.json()["action"] == "deny"
     assert blocked.json()["response"]["result"]["isError"] is True
+
+
+@pytest.mark.asyncio
+async def test_claude_web_block_response_is_not_forwarded(monkeypatch):
+    import httpx
+
+    monkeypatch.setattr(config, "MCP_REQUEST_TOKEN", "x" * 32)
+    service = ApprovalService(5)
+    interceptor = Interceptor(service, {"tools/call"})
+    app = create_remote_app(interceptor, {
+        "filesystem": {"url": "http://127.0.0.1:8000/mcp"},
+    }, "s" * 32)
+
+    async def go():
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as client:
+            task = asyncio.create_task(client.post(
+                "/remote/filesystem/" + "s" * 32,
+                headers={"content-type": "application/json", "accept": "application/json, text/event-stream"},
+                json={
+                    "jsonrpc": "2.0",
+                    "id": 42,
+                    "method": "tools/call",
+                    "params": {"name": "read_text_file", "arguments": {"path": "/tmp/note.txt"}},
+                },
+            ))
+            await asyncio.sleep(0)
+            assert len(service.list_pending()) == 1
+            service.decide(service.list_pending()[0].id, False)
+            return await task
+
+    response = await go()
+    assert response.status_code == 200
+    body = response.json()
+    assert body["id"] == 42
+    assert body["result"]["isError"] is True
+    assert "Blocked by user" in body["result"]["content"][0]["text"]

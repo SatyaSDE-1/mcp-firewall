@@ -1,4 +1,4 @@
-# /Users/anurag/task/walled-ai-mcp-firewall-py/src/mcp_firewall/approval_socket.py
+
 """Socket.IO bridge between approval decisions and the Electron popup."""
 
 import asyncio

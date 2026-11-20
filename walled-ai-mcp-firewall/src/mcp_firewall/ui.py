@@ -1,4 +1,4 @@
-# /Users/anurag/task/walled-ai-mcp-firewall-py/src/mcp_firewall/ui.py
+
 """Always-on-top Tkinter approval popups. Tk must own the main thread."""
 import json
 import queue

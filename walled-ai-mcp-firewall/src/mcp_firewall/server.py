@@ -1,4 +1,4 @@
-# /Users/anurag/task/walled-ai-mcp-firewall-py/src/mcp_firewall/server.py
+
 """HTTP surfaces: local /mcp/intercept (Claude Desktop wrapper) and the
 public-facing Claude Web proxy (separate app/port so a tunnel exposes only it)."""
 import hmac

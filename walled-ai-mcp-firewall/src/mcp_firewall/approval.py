@@ -1,4 +1,4 @@
-# /Users/anurag/task/walled-ai-mcp-firewall-py/src/mcp_firewall/approval.py
+
 """Holds requests pending until the user decides. Everything fails closed."""
 import asyncio
 import logging

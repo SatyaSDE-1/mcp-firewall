@@ -1,4 +1,4 @@
-# /Users/anurag/task/walled-ai-mcp-firewall-py/src/mcp_firewall/audit.py
+
 """One JSON line per settled request -> logs/audit.jsonl."""
 import json
 import logging

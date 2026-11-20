@@ -1,4 +1,4 @@
-// /Users/anurag/walled-ai-mcp-popup/preload.js
+
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('firewall', {

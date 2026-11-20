@@ -1,4 +1,4 @@
-// /Users/anurag/walled-ai-mcp-popup/renderer.js
+
 const $ = (id) => document.getElementById(id);
 let currentId = null;
 
